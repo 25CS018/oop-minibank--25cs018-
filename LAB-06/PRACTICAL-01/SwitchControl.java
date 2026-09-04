@@ -47,13 +47,13 @@ public class SwitchControl {
             new Light()
         };
 
-        boolean[] isOn = {
+        boolean[] ison = {
             false,
             true
         };
 
         for (int i = 0; i < devices.length; i++) {
-            devices[i].toggle(isOn[i]);
+            devices[i].toggle(ison[i]);
         }
 
         SwitchPolicy policy1 = new SwitchPolicy() {

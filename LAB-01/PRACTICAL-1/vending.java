@@ -1,7 +1,7 @@
 
 import java.util.Scanner;
 
-public class vending{
+class vending{
         enum Coins {ONE,TWO,FIVE,TEN}
 
     public static void main(String[] args) {

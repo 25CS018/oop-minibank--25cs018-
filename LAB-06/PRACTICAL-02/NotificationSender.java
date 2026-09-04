@@ -16,7 +16,7 @@ public class NotificationSender {
 
     public static void main(String[] args) {
 
-        Notifier email = mssg -> System.out.println("Email: " + mssg);
+       
 
         Notifier sms = mssg -> System.out.println("SMS: " + mssg);
 
