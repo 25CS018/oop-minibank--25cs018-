@@ -37,7 +37,7 @@ public class CounterRace {
         System.out.println("Expected: " + (THREADS * INCREMENTS));
 
 
-        counter.count = 1;
+        counter.count = 0;
 
         for (int i = 0; i < THREADS; i++) {
             threads[i] = new Thread(() -> {
