@@ -1,100 +1,131 @@
-import java.util.*;
 
-record BankInfo(String name, String branch) {
+class BankException extends Exception {
+
+    public BankException(String message) {
+        super(message);
+    }
 }
-
-enum MenuOption {
-    OPEN_ACCOUNT,
-    DEPOSIT,
-    WITHDRAW,
-    TRANSFER,
-    EXIT
-}
-
-public class MiniBank  {
+public class MiniBank {
 
     public static void main(String[] args) {
 
-        Account[] accounts = {
-            new Account("x", 5000),
-            new Account("y", 3000),
-            new Account("z", 7000)
+        Account a1 = new SavingsAccount("Dhruvi", 100001L, 5000L);
+        Account a2 = new SavingsAccount("princee", 100002L, 3000L);
+
+        System.out.println(a1);
+        System.out.println(a2);
+
+        System.out.println("Are accounts equal? " + a1.equals(a2));
+
+        Object obj = a1;
+
+        if (obj instanceof Account) {
+            System.out.println("Object is an Account");
+        }
+
+        Customer c1 = new Customer(
+            "Dhruvi",
+            "dhruvi@gmail.com",
+            "9876543210"
+        );
+
+        Customer.Address address =
+            new Customer.Address(
+                "Main Road",
+                "Surat",
+                "395001"
+            );
+
+        c1.setAddress(address);
+
+        Customer c2 = c1.clone();
+
+        System.out.println("Customer ID: " + c2.getCustomerId());
+        System.out.println("City: " + c2.getAddress().getCity());
+
+
+         System.out.println(
+            "Mobile valid: " +
+            Validator.isValidMobile("9876543210")
+        );
+
+        System.out.println(
+            "Mobile valid: " +
+            Validator.isValidMobile("12345")
+        );
+
+        System.out.println(
+            "Email valid: " +
+            Validator.isValidEmail("abc@gmail.com")
+        );
+
+        System.out.println(
+            "Email valid: " +
+            Validator.isValidEmail("abc@")
+        );
+
+        System.out.println(
+            "PAN valid: " +
+            Validator.isValidPan("ABCDE1234F")
+        );
+
+        System.out.println(
+            "PAN valid: " +
+            Validator.isValidPan("12345ABCDE")
+        );
+
+        System.out.println(
+            "IFSC valid: " +
+            Validator.isValidIfsc("SBIN0001234")
+        );
+
+        System.out.println(
+            "IFSC valid: " +
+            Validator.isValidIfsc("123456")
+        );
+
+        Command command =
+            CommandParser.parse("DEPOSIT AC0001 500");
+
+        System.out.println("Type: " + command.type());
+        System.out.println("Account: " + command.accountNumber());
+        System.out.println("Amount: " + command.amount());
+
+        Account account = new SavingsAccount("Dhruvi", 100003L, 5000L);
+
+        System.out.println(
+            StatementFormatter.buildStatement(account)
+        );
+
+          Account[] accounts = {
+            new SavingsAccount("Dhruvi", 5000, 1000),
+            new CurrentAccount("Rahul", 2000, 5000),
+            new FixedDepositAccount("Priya", 10000)
         };
 
-        accounts[0].deposit(1000);
-        accounts[1].withdraw(500);
-        accounts[2].deposit(2000);
-        accounts[2].withdraw(1000);
+        for (Account currentAccount : accounts) {
 
-        for (Account account : accounts) {
-            System.out.println(account);
-        }
+            System.out.println(
+                "Account: " +
+                currentAccount.getAccountNumber()
+            );
 
-        System.out.println();
-        System.out.println("Account comparison tests:");
-        System.out.println("Account 1 equals Account 2: " + accounts[0].equals(accounts[1]));
-        System.out.println("Account 1 equals itself: " + accounts[0].equals(accounts[0]));
+            System.out.println(
+                "Interest Rate: " +
+                currentAccount.interestRate()
+            );
 
-        Object someObject = accounts[0];
-        if (someObject instanceof Account) {
-            Account account = (Account) someObject;
-            System.out.println("someObject is an Account with number: " + account.getAccountNumber());
-        }
-
-        Scanner sc = new Scanner(System.in);
-
-        BankInfo bank = new BankInfo("BOI", "Main Branch");
-
-        System.out.println("=================================");
-        System.out.println(bank);
-        System.out.println("=================================");
-
-        int choice;
-
-        do {
             System.out.println();
-            System.out.println("1. Open Account");
-            System.out.println("2. Deposit");
-            System.out.println("3. Withdraw");
-            System.out.println("4. Transfer");
-            System.out.println("5. Exit");
-            System.out.print("Enter your choice: ");
+        }
 
-            choice = sc.nextInt();
+                    Account minimumBalanceAccount =
+            new SavingsAccount("Dhruvi", 5000, 1000);
 
-            MenuOption option = switch (choice) {
-                case 1 -> MenuOption.OPEN_ACCOUNT;
-                case 2 -> MenuOption.DEPOSIT;
-                case 3 -> MenuOption.WITHDRAW;
-                case 4 -> MenuOption.TRANSFER;
-                case 5 -> MenuOption.EXIT;
-                default -> null;
-            };
-
-            if (option == null) {
-                System.out.println("Invalid choice");
-                continue;
-            }
-
-            switch (option) {
-                case OPEN_ACCOUNT ->
-                    System.out.println("Open Account - To be implemented in a later lab");
-
-                case DEPOSIT ->
-                    System.out.println("Deposit - To be implemented in a later lab");
-
-                case WITHDRAW ->
-                    System.out.println("Withdraw - To be implemented in a later lab");
-
-                case TRANSFER ->
-                    System.out.println("Transfer - To be implemented in a later lab");
-
-                case EXIT ->
-                    System.out.println("Thank you for using MiniBank. Goodbye!");
-            }
-
-        } while (choice != 5);
-
-        sc.close();
+                if (minimumBalanceAccount instanceof SavingsAccount savings) {
+            System.out.println(
+                "Minimum balance account found: " +
+                savings.getBalance()
+            );
+        }
     }
 }

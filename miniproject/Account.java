@@ -1,68 +1,70 @@
-import java.lang.*;
-import java.util.*;
+public abstract class Account {
 
- public class Account {
-    private static int counter = 1;
     private final String accountNumber;
     private String ownerName;
     private long balance;
     private boolean active;
 
-    
+    private static int accountCounter = 0;
+
+    private static String generateAccountNumber() {
+        accountCounter++;
+        return String.format("AC%04d", accountCounter);
+    }
+
+    public Account(String ownerName, long openingBalance) {
+        this.accountNumber = generateAccountNumber();
+        this.ownerName = ownerName;
+        this.balance = openingBalance;
+        this.active = true;
+    }
 
     public Account(String ownerName) {
         this(ownerName, 0);
     }
 
-    public Account(String ownerName, long balance) {
-        this.accountNumber = String.format("AC%04d", counter++);
-        this.ownerName = ownerName;
-        this.balance = balance;
-        this.active = true;
-    }
-
     public void deposit(long amount) {
-        if (amount > 0) {
-            balance += amount;
-        }
+        balance = balance + amount;
     }
 
     public boolean withdraw(long amount) {
-        if (amount > 0 && amount <= balance) {
-            balance -= amount;
+
+        if (canWithdraw(amount)) {
+            balance = balance - amount;
             return true;
         }
+
         return false;
     }
 
-   @Override 
-   public String toString(){
-    return "Account Number:"+accountNumber+"\n"+"Owner Name:"+ownerName+"\n"+"Balance:"+balance;
+    public abstract double interestRate();
 
-   }
+    public abstract boolean canWithdraw(long amount);
 
-   @Override
-   public boolean equals(Object obj){
-       if (this == obj) return true;
-       if (!(obj instanceof Account)) return false;
-       Account other = (Account) obj;
-       return Objects.equals(accountNumber, other.accountNumber)
-               && Objects.equals(ownerName, other.ownerName)
-               && balance == other.balance
-               && active == other.active;
-   }
+    public String getAccountNumber() {
+        return accountNumber;
+    }
 
-   @Override
-   public int hashCode(){
-       return Objects.hash(accountNumber, ownerName, balance, active);
-   }
+    public String getOwnerName() {
+        return ownerName;
+    }
 
-   public String getAccountNumber(){
-    return accountNumber;
-   }
-    public long getBalance(){
-    return balance;
-   }
+    public long getBalance() {
+        return balance;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    protected void setBalance(long balance) {
+        this.balance = balance;
+    }
+
+    @Override
+    public String toString() {
+        return accountNumber + " " +
+               ownerName + " " +
+               balance;
+    }
 }
-        
-    
