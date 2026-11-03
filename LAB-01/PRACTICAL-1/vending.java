@@ -1,49 +1,79 @@
 
 import java.util.Scanner;
 
-class vending{
-        enum Coins {ONE,TWO,FIVE,TEN}
+class vending {
+
+    // Enum defines the valid types of coins
+    enum Coins {
+        ONE, TWO, FIVE, TEN
+    }
 
     public static void main(String[] args) {
 
-        final int price =15;
-        int total=0;
-        Scanner sc=new Scanner(System.in);
+        // Fixed price of the snack
+        final int price = 15;
 
-        System.out.println("Snack price:"+price);
-        System.out.println("Insert coins:(ONR,TWO,FIVE,TEN):");
-        while(total<price)
-        {
+        // Stores the total amount inserted by the user
+        int total = 0;
+
+        // Creates Scanner object to take user input
+        Scanner sc = new Scanner(System.in);
+
+        // Display snack price
+        System.out.println("Snack price: " + price);
+
+        // Ask the user to insert coins
+        System.out.println("Insert coins: (ONE, TWO, FIVE, TEN):");
+
+        // Continue accepting coins until the total reaches the price
+        while (total < price) {
+
             System.out.println("coin:");
-            String input=sc.next().toUpperCase();
+
+            // Read coin input and convert it to uppercase
+            String input = sc.next().toUpperCase();
 
             Coins coin;
+
+            // Check whether the entered coin is valid
             try {
-                coin=Coins.valueOf(input);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Not a valid coin,try again.");
+                coin = Coins.valueOf(input);
+            } 
+            catch (IllegalArgumentException e) {
+
+                // Display error message for invalid coin
+                System.out.println("Not a valid coin, try again.");
+
+                // Skip the remaining statements and repeat the loop
                 continue;
             }
-            int value=switch(coin){
+
+            // Assign the numerical value to the selected coin
+            int value = switch (coin) {
                 case ONE -> 1;
                 case TWO -> 2;
                 case FIVE -> 5;
                 case TEN -> 10;
-
             };
-            total+=value;
-            System.out.println("Inserted so far:"+total);
 
+            // Add the inserted coin value to the total
+            total += value;
+
+            // Display the total amount inserted so far
+            System.out.println("Inserted so far: " + total);
         }
-          System.out.println("Snack dispensed!");
 
+        // Dispense the snack once the required amount is collected
+        System.out.println("Snack dispensed!");
+
+        // Check whether the user inserted extra money
         if (total > price) {
+
+            // Return the extra amount as change
             System.out.println("Change returned: " + (total - price));
         }
 
+        // Close the Scanner object
         sc.close();
-        
     }
-
 }
-
