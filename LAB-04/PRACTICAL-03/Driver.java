@@ -5,7 +5,7 @@ public class Driver {
         // Stores the names of the placeholders
         String[] names = {"name", "id"};
         // Stores the values for the corresponding placeholders
-        String[] values = {"Dhruvi", "A07"};
+        String[] values = {"Riya", "A07"};
         // Calls the fillTemplate() method to replace placeholders with values
         TemplateFiller.fillTemplate(template, names, values);
     }
