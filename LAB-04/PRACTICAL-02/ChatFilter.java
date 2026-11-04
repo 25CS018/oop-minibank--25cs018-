@@ -1,4 +1,3 @@
-
 public class ChatFilter {
     // Method to search chat logs for a given keyword
     public static void searchLogs(String[] logs, String keyword) {
