@@ -1,0 +1,213 @@
+
+import java.util.concurrent.atomic.AtomicLong;
+
+public class Main {
+
+    // Number of elements in the large array
+    static final int SIZE = 1000000;
+
+    // Number of threads
+    static final int THREADS = 4;
+
+    // Shared total without synchronization
+    static long unsafeTotal = 0;
+
+    // Shared total using synchronized
+    static long synchronizedTotal = 0;
+
+    // Shared total using AtomicLong
+    static AtomicLong atomicTotal = new AtomicLong(0);
+
+    // Method 1: Add numbers without synchronization
+    static class UnsafeTask extends Thread {
+
+        int[] arr;
+        int start, end;
+
+        UnsafeTask(int[] arr, int start, int end) {
+            this.arr = arr;
+            this.start = start;
+            this.end = end;
+        }
+
+        public void run() {
+
+            for (int i = start; i < end; i++) {
+
+                // Multiple threads update the same variable
+                // This may cause a race condition
+                unsafeTotal += arr[i];
+            }
+        }
+    }
+
+    // Method 2: Add numbers using synchronized
+    static class SyncTask extends Thread {
+
+        int[] arr;
+        int start, end;
+
+        SyncTask(int[] arr, int start, int end) {
+            this.arr = arr;
+            this.start = start;
+            this.end = end;
+        }
+
+        public void run() {
+
+            long localSum = 0;
+
+            // Each thread calculates its own sum
+            for (int i = start; i < end; i++) {
+                localSum += arr[i];
+            }
+
+            // Only one thread can update the shared total at a time
+            synchronized (Main.class) {
+                synchronizedTotal += localSum;
+            }
+        }
+    }
+
+    // Method 3: Add numbers using AtomicLong
+    static class AtomicTask extends Thread {
+
+        int[] arr;
+        int start, end;
+
+        AtomicTask(int[] arr, int start, int end) {
+            this.arr = arr;
+            this.start = start;
+            this.end = end;
+        }
+
+        public void run() {
+
+            long localSum = 0;
+
+            // Calculate individual thread sum
+            for (int i = start; i < end; i++) {
+                localSum += arr[i];
+            }
+
+            // Atomically add the local sum to shared total
+            atomicTotal.addAndGet(localSum);
+        }
+    }
+
+    public static void main(String[] args)
+            throws InterruptedException {
+
+        // Create a large array
+        int[] arr = new int[SIZE];
+
+        // Fill the array with numbers from 1 to 1000000
+        for (int i = 0; i < SIZE; i++) {
+            arr[i] = 1;
+        }
+
+        // Expected total
+        long expectedTotal = SIZE;
+
+        // Divide array into four equal parts
+        int chunk = SIZE / THREADS;
+
+        // -----------------------------------
+        // METHOD 1: WITHOUT SYNCHRONIZATION
+        // -----------------------------------
+
+        long startTime = System.nanoTime();
+
+        Thread[] t1 = new Thread[THREADS];
+
+        for (int i = 0; i < THREADS; i++) {
+
+            int start = i * chunk;
+            int end = (i == THREADS - 1)
+                    ? SIZE : start + chunk;
+
+            t1[i] = new UnsafeTask(arr, start, end);
+            t1[i].start();
+        }
+
+        // Wait for all threads to finish
+        for (Thread t : t1) {
+            t.join();
+        }
+
+        long endTime = System.nanoTime();
+
+        long unsafeTime = endTime - startTime;
+
+        // -----------------------------------
+        // METHOD 2: USING SYNCHRONIZED
+        // -----------------------------------
+
+        startTime = System.nanoTime();
+
+        Thread[] t2 = new Thread[THREADS];
+
+        for (int i = 0; i < THREADS; i++) {
+
+            int start = i * chunk;
+            int end = (i == THREADS - 1)
+                    ? SIZE : start + chunk;
+
+            t2[i] = new SyncTask(arr, start, end);
+            t2[i].start();
+        }
+
+        for (Thread t : t2) {
+            t.join();
+        }
+
+        endTime = System.nanoTime();
+
+        long syncTime = endTime - startTime;
+
+        // -----------------------------------
+        // METHOD 3: USING ATOMICLONG
+        // -----------------------------------
+
+        startTime = System.nanoTime();
+
+        Thread[] t3 = new Thread[THREADS];
+
+        for (int i = 0; i < THREADS; i++) {
+
+            int start = i * chunk;
+            int end = (i == THREADS - 1)
+                    ? SIZE : start + chunk;
+
+            t3[i] = new AtomicTask(arr, start, end);
+            t3[i].start();
+        }
+
+        for (Thread t : t3) {
+            t.join();
+        }
+
+        endTime = System.nanoTime();
+
+        long atomicTime = endTime - startTime;
+
+        // -----------------------------------
+        // DISPLAY RESULTS
+        // -----------------------------------
+
+        System.out.println("Expected Total: " + expectedTotal);
+
+        System.out.println("\n1. Without Synchronization");
+        System.out.println("Total: " + unsafeTotal);
+        System.out.println("Time: " + unsafeTime + " ns");
+
+        System.out.println("\n2. Using Synchronized");
+        System.out.println("Total: " + synchronizedTotal);
+        System.out.println("Time: " + syncTime + " ns");
+
+        System.out.println("\n3. Using AtomicLong");
+        System.out.println("Total: " + atomicTotal.get());
+        System.out.println("Time: " + atomicTime + " ns");
+
+    }
+}
