@@ -1,119 +1,84 @@
 import java.util.*;
-
-// Custom exception for handling insufficient stock
+// Custom exception for insufficient stock
 class OutOfStockException extends Exception {
-
-    private int shortfall; // Stores how many additional items are required
-
-    // Constructor of OutOfStockException
+    private int shortfall;
+    // Constructor
     public OutOfStockException(String message, int shortfall) {
-        super(message); // Passes error message to parent Exception class
-        this.shortfall = shortfall; // Initializes shortfall value
+        super(message);
+        this.shortfall = shortfall;
     }
-
-    // Getter method to return the shortfall
+    // Getter method to return shortfall
     public int getShortfall() {
         return shortfall;
     }
 }
-
-// Custom exception for handling invalid quantity
+// Custom exception for invalid quantity
 class InvalidQuantityException extends Exception {
-
-    // Constructor of InvalidQuantityException
+    // Constructor
     public InvalidQuantityException(String message) {
-        super(message); // Passes error message to parent Exception class
+        super(message);
     }
 }
-
-// Warehouse class to manage available stock
+// Warehouse class
 class Warehouse {
-
-    private int stock; // Stores the available stock
-
-    // Constructor to initialize warehouse stock
+    private int stock;
+    // Initialize warehouse stock
     public Warehouse(int stock) {
         this.stock = stock;
     }
-
-    // Method to issue items from the warehouse
-    // throws declares the exceptions that this method may generate
+    // Method to issue items
+    // throws declares possible exceptions
     public void issue(String item, int qty)
             throws OutOfStockException, InvalidQuantityException {
-
-        // Check whether the requested quantity is valid
+        // Check for invalid quantity
         if (qty <= 0) {
             throw new InvalidQuantityException(
                     "Quantity must be greater than 0");
         }
-
-        // Check whether sufficient stock is available
+        // Check whether requested quantity exceeds stock
         if (qty > stock) {
-
-            // Calculate how many additional items are required
+            // Calculate shortage
             int shortfall = qty - stock;
-
-            // Throw custom exception if stock is insufficient
+            // Throw out-of-stock exception
             throw new OutOfStockException(
                     "Not enough stock for " + item,
                     shortfall);
         }
-
-        // Reduce stock after successful issue
+        // Reduce stock after issuing items
         stock = stock - qty;
-
-        // Display successful issue message
         System.out.println(
                 item + " issued successfully. Quantity = " + qty);
     }
 }
-
-// Main class
-public class StockIssue {
-
+// Main class - execution starts here
+public class Main {
     public static void main(String[] args) {
-
-        // Create Warehouse object with initial stock of 10 items
+        // Create warehouse with initial stock of 10
         Warehouse warehouse = new Warehouse(10);
-
-        // Array containing item names
+        // Item names
         String[] items = {"Pen", "Book", "Pencil", "Bag"};
-
-        // Array containing requested quantities
+        // Requested quantities
         int[] quantities = {3, 12, 0, 4};
-
-        // Loop through all item requests
+        // Process each item request
         for (int i = 0; i < items.length; i++) {
-
             try {
-
-                // Try to issue the requested item
+                // Issue the requested item
                 warehouse.issue(items[i], quantities[i]);
-
             }
-
-            // Handle insufficient stock exception
+            // Handle insufficient stock
             catch (OutOfStockException e) {
-
-                // Display out-of-stock message
                 System.out.println(
                         "Out of stock: " + e.getMessage());
-
-                // Display how many additional items are required
                 System.out.println(
                         "Shortfall = " + e.getShortfall());
             }
-
-            // Handle invalid quantity exception
+            // Handle invalid quantity
             catch (InvalidQuantityException e) {
-
-                // Display invalid quantity message
                 System.out.println(
                         "Invalid quantity: " + e.getMessage());
             }
         }
-
-        // Display message after processing all requests
+        // Display final message
         System.out.println("All requests processed.");
     }
 }
