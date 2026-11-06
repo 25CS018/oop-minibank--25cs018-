@@ -1,0 +1,88 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+// MODEL CLASS
+// Stores student information
+class Student {
+    private String name;
+    // Constructor
+    Student(String name) {
+        this.name = name;
+    }
+   // Getter method
+    public String getName() {
+        return name;
+    }
+}
+// SERVICE CLASS
+// Performs operations using ArrayList
+class StudentService {
+    // ArrayList to store students
+    private ArrayList<Student> students = new ArrayList<>();
+    // Method to add student
+    public void addStudent(String name) {
+        // Check for invalid name
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Invalid student name!");
+        }
+        students.add(new Student(name));
+        System.out.println("Student added successfully!");
+    }
+    // Method to return total student count
+    public int getCount() {
+        return students.size();
+    }
+    // Method to display all students
+    public void displayStudents() {
+        if (students.isEmpty()) {
+            System.out.println("No students found.");
+            return;
+        }
+        for (Student s : students) {
+            System.out.println(s.getName());
+        }
+    }
+}
+// MAIN CLASS
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        StudentService service = new StudentService();
+        int choice = 0;
+        // Menu-driven program
+        do {
+            System.out.println("\n--- STUDENT MENU ---");
+            System.out.println("1. Add Student");
+            System.out.println("2. Display Students");
+            System.out.println("3. Show Student Count");
+            System.out.println("4. Exit");
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
+            sc.nextLine();
+            try {
+                switch (choice) {
+                    case 1:
+                        System.out.print("Enter student name: ");
+                        String name = sc.nextLine();
+                        service.addStudent(name);
+                        break;
+                    case 2:
+                        service.displayStudents();
+                        break;
+                    case 3:
+                        System.out.println("Total Students: "
+                                + service.getCount());
+                        break;
+                    case 4:
+                        System.out.println("Program ended.");
+                        break;
+                    default:
+                        throw new IllegalArgumentException(
+                                "Invalid menu choice!");
+                }
+            } catch (IllegalArgumentException e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+        } while (choice != 4);
+        sc.close();
+    }
+}
